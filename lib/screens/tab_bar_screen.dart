@@ -15,10 +15,10 @@ class TabBarScreen extends StatefulWidget {
 class _TabBarScreenState extends State<TabBarScreen> {
   int _selectedIndex = 0;
 
-  static const List<Widget> _pages = <Widget>[
+  static final List<Widget> _pages = <Widget>[
     HomeScreen(),
-    BookmarksScreen(),
-    SettingsScreen(),
+    const BookmarksScreen(),
+    const SettingsScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -30,10 +30,7 @@ class _TabBarScreenState extends State<TabBarScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Rehaish Ki Khwaish'),
-        backgroundColor: Colors.red,  // Use theme colors to match your design
-      ),
+     
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
