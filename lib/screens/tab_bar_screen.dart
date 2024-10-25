@@ -1,6 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
+import 'package:rehaish_app/config/color_constants.dart';
 import 'package:rehaish_app/screens/bookmarks_screen.dart';
 import 'package:rehaish_app/screens/home_screen.dart';
 import 'package:rehaish_app/screens/settings_screen.dart';
@@ -16,7 +17,7 @@ class _TabBarScreenState extends State<TabBarScreen> {
   int _selectedIndex = 0;
 
   static final List<Widget> _pages = <Widget>[
-    HomeScreen(),
+    const HomeScreen(),
     const BookmarksScreen(),
     const SettingsScreen(),
   ];
@@ -48,7 +49,7 @@ class _TabBarScreenState extends State<TabBarScreen> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.redAccent,  // Match the theme
+        selectedItemColor: ColorConstants.primaryColor,
         onTap: _onItemTapped,
       ),
     );

@@ -1,26 +1,35 @@
 import 'package:flutter/material.dart';
-import '../api/dorm_api.dart';
-import '../models/dorm.dart';
+import 'package:rehaish_app/config/enums.dart';
+import 'package:rehaish_app/api/dorm_api.dart';
+import 'package:rehaish_app/models/dorm.dart';
 
 class DormProvider with ChangeNotifier {
   List<Dorm> _dorms = [];
-  bool _isLoading = false;
+  DataStatus _dataStatus = DataStatus.initial;
+  bool _hasFetchedDorms = false;  // New flag to indicate if dorms are already fetched
 
   List<Dorm> get dorms => _dorms;
-  bool get isLoading => _isLoading;
+  DataStatus get dataStatus => _dataStatus;
 
   // Fetch dorms from the API
   Future<void> fetchDorms() async {
-    _isLoading = true;
+    if (_hasFetchedDorms) {
+      return;  // Don't fetch again if dorms are already fetched
+    }
+
+    _dataStatus = DataStatus.loading;
     notifyListeners();
 
     try {
-      _dorms = (await DormApi.getDorms()).map((data) => Dorm.fromJson(data)).toList();
+      final dormsData = await DormApi.getDorms();
+      _dorms = dormsData.map((data) => Dorm.fromJson(data)).toList();
+      _dataStatus = DataStatus.loaded;
+      _hasFetchedDorms = true;  // Set flag to true when dorms are fetched
     } catch (error) {
+      _dataStatus = DataStatus.failure;
       print('Error fetching dorms: $error');
-    } finally {
-      _isLoading = false;
-      notifyListeners();
     }
+
+    notifyListeners();
   }
 }

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:rehaish_app/widgets/dorm_card.dart';
 import '../providers/dorm_provider.dart';
 import '../config/color_constants.dart';
 import '../config/text_styles.dart';
+import '../config/enums.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -11,10 +13,12 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final dormProvider = Provider.of<DormProvider>(context);
 
-    // Fetch dorms when the screen loads
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      dormProvider.fetchDorms();
-    });
+    // Check if dorms are already loaded, otherwise fetch them
+    if (dormProvider.dataStatus == DataStatus.initial) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        dormProvider.fetchDorms();
+      });
+    }
 
     return Scaffold(
       backgroundColor: ColorConstants.backgroundColor,
@@ -25,93 +29,48 @@ class HomeScreen extends StatelessWidget {
         ),
         backgroundColor: ColorConstants.primaryColor,
       ),
-      body: dormProvider.isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ListView.builder(
-                itemCount: dormProvider.dorms.length,
-                itemBuilder: (context, index) {
-                  final dorm = dormProvider.dorms[index];
-                  return Card(
-                    elevation: 4,
-                    margin: const EdgeInsets.symmetric(vertical: 10),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
+      body: Builder(
+        builder: (context) {
+          switch (dormProvider.dataStatus) {
+            case DataStatus.loading:
+              return const Center(child: CircularProgressIndicator());
+            case DataStatus.loaded:
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: ListView.builder(
+                  itemCount: dormProvider.dorms.length,
+                  itemBuilder: (context, index) {
+                    final dorm = dormProvider.dorms[index];
+                    return DormCard(dorm: dorm);
+                  },
+                ),
+              );
+            case DataStatus.failure:
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.error_outline, color: Colors.red, size: 60),
+                    const SizedBox(height: 10),
+                    const Text(
+                      'Failed to load dorms. Please try again later.',
+                      style: TextStyle(fontSize: 16),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Placeholder image for now
-                        ClipRRect(
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(15),
-                            topRight: Radius.circular(15),
-                          ),
-                          child: Image.asset(
-                            'assets/images/placeholder_image.png', // Path to your placeholder image
-                            height: 180,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                dorm.title,
-                                style: TextStyles.title(context),
-                              ),
-                              const SizedBox(height: 5),
-                              Text(
-                                dorm.city.name,
-                                style: TextStyles.caption(context),
-                              ),
-                              const SizedBox(height: 5),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    '${dorm.pricePerMonth} PKR / month',
-                                    style: TextStyles.bold(context),
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                      vertical: 4,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: ColorConstants.primaryColor,
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        const Icon(
-                                          Icons.star,
-                                          color: Colors.white,
-                                          size: 16,
-                                        ),
-                                        const SizedBox(width: 5),
-                                        Text(
-                                          dorm.rating.toString(),
-                                          style: const TextStyle(color: Colors.white),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: () {
+                        dormProvider.fetchDorms(); // Retry fetching dorms
+                      },
+                      child: const Text('Retry'),
                     ),
-                  );
-                },
-              ),
-            ),
+                  ],
+                ),
+              );
+            default:
+              return const Center(child: Text('No data available.'));
+          }
+        },
+      ),
     );
   }
 }
