@@ -52,7 +52,7 @@ class Dorm {
       guestFavorite: json['guestFavorite'] ?? false,
       reviews: (json['reviews'] as List<dynamic>?)?.map((reviewJson) {
         if (reviewJson is String) {
-          return Review(id: reviewJson, rating: 0, title: '', text: '', user: User(id: '', username: '', email: '', firstName: '', lastName: '', profilePicture: '', bookmarks: []));
+          return Review(id: reviewJson, rating: 0, title: '', text: '', user: User(id: '', username: '', email: '', firstName: '', lastName: '', profilePicture: '', bookmarks: [], role: '', createdAt: ''));
         } else if (reviewJson is Map<String, dynamic>) {
           return Review.fromJson(reviewJson);
         } else {

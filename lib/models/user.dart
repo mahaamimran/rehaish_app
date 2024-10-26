@@ -5,6 +5,8 @@ class User {
   final String firstName;
   final String lastName;
   final String profilePicture;
+  final String role;
+  final String createdAt;
   final List<String> bookmarks;
 
   User({
@@ -14,6 +16,8 @@ class User {
     required this.firstName,
     required this.lastName,
     required this.profilePicture,
+    required this.role,
+    required this.createdAt,
     required this.bookmarks,
   });
 
@@ -25,6 +29,8 @@ class User {
       firstName: json['firstName'],
       lastName: json['lastName'],
       profilePicture: json['profilePicture'] ?? 'default.jpg',
+      role: json['role'],
+      createdAt: json['createdAt'],
       bookmarks: List<String>.from(json['bookmarks'] ?? []),
     );
   }
@@ -37,6 +43,8 @@ class User {
       'firstName': firstName,
       'lastName': lastName,
       'profilePicture': profilePicture,
+      'role': role,
+      'createdAt': createdAt,
       'bookmarks': bookmarks,
     };
   }
