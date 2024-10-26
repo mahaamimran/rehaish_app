@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:async';
 import 'package:http/http.dart' as http;
-
+import 'package:rehaish_app/models/dorm.dart';
+import '../config/constants.dart';
 class DormApi {
-  static const String baseUrl = 'http://192.168.18.187:3000/api/v1';
   static const int maxRetries = 3;
 
   static Future<List<Map<String, dynamic>>> getDorms() async {
@@ -11,7 +11,7 @@ class DormApi {
     const initialRetryDelay = Duration(seconds: 2);
 
     while (retryCount < maxRetries) {
-      final response = await http.get(Uri.parse('$baseUrl/dorms/all'));
+      final response = await http.get(Uri.parse('${Constants.baseUrl}/dorms/all'));
 
       // Log the status code and the body of the response
       print('Response status: ${response.statusCode}');
@@ -29,7 +29,8 @@ class DormApi {
         // Handle rate-limiting by retrying with exponential backoff
         print('Too many requests, retrying after delay...');
         retryCount++;
-        await Future.delayed(initialRetryDelay * retryCount); // Exponential backoff
+        await Future.delayed(
+            initialRetryDelay * retryCount); // Exponential backoff
       } else {
         // Log error and throw exception
         throw Exception('Failed to load dorms');
@@ -37,5 +38,19 @@ class DormApi {
     }
 
     throw Exception('Max retries exceeded, failed to load dorms');
+  }
+
+  static Future<Dorm> getDormById(String id) async {
+    final response = await http.get(Uri.parse('${Constants.baseUrl}/dorms/$id'));
+
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+      return Dorm.fromJson(jsonResponse);
+    } else {
+      throw Exception('Failed to load dorm details');
+    }
   }
 }

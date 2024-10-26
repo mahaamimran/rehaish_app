@@ -5,6 +5,7 @@ import 'package:rehaish_app/config/color_constants.dart';
 import 'package:rehaish_app/screens/bookmarks_screen.dart';
 import 'package:rehaish_app/screens/home_screen.dart';
 import 'package:rehaish_app/screens/settings_screen.dart';
+import 'package:rehaish_app/screens/profile_screen.dart';
 
 class TabBarScreen extends StatefulWidget {
   const TabBarScreen({super.key});
@@ -20,6 +21,7 @@ class _TabBarScreenState extends State<TabBarScreen> {
     const HomeScreen(),
     const BookmarksScreen(),
     const SettingsScreen(),
+    const ProfileScreen(), 
   ];
 
   void _onItemTapped(int index) {
@@ -31,7 +33,6 @@ class _TabBarScreenState extends State<TabBarScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-     
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
@@ -47,8 +48,15 @@ class _TabBarScreenState extends State<TabBarScreen> {
             icon: Icon(Icons.settings),
             label: 'Settings',
           ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile', // Profile tab
+          ),
         ],
         currentIndex: _selectedIndex,
+        unselectedItemColor: Colors.grey,
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
         selectedItemColor: ColorConstants.primaryColor,
         onTap: _onItemTapped,
       ),

@@ -1,7 +1,11 @@
 // ignore_for_file: constant_identifier_names
 
 class Constants {
-   // SharedPreferences Keys
+
+  // API URL
+  static const String baseUrl = 'http://192.168.18.187:3000/api/v1';
+
+  // SharedPreferences Keys
   static const String FONT_SIZE_KEY = 'fontSize';
   static const String FONT_FAMILY_KEY = 'fontFamily';
   static const String IS_GRID_VIEW_KEY = 'isGridView';

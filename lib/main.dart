@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rehaish_app/providers/dorm_provider.dart';
 import 'package:rehaish_app/providers/settings_provider.dart';
-import 'screens/tab_bar_screen.dart';
+import 'package:rehaish_app/providers/auth_provider.dart';
+import 'package:rehaish_app/screens/login_screen.dart';
+import 'package:rehaish_app/screens/signup_screen.dart';
+import 'package:rehaish_app/screens/tab_bar_screen.dart';
+import 'package:rehaish_app/screens/settings_screen.dart';
+import 'package:rehaish_app/screens/dorm_details_screen.dart';
 
 void main() {
   runApp(
@@ -10,6 +15,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => DormProvider()),
         ChangeNotifierProvider(create: (_) => SettingsProvider()),
+        ChangeNotifierProvider(create: (_) => AuthProvider()..loadToken()), // Load token on app start
       ],
       child: const MyApp(),
     ),
@@ -19,13 +25,31 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    final authProvider = Provider.of<AuthProvider>(context);
+
+    return MaterialApp(
       title: 'Rehaish ki Khwaish',
-      home: TabBarScreen(), 
       debugShowCheckedModeBanner: false,
+      home: authProvider.token == null ? const LoginScreen() : const TabBarScreen(), // Conditionally show screen
+      routes: {
+        '/login': (context) => const LoginScreen(),
+        '/signup': (context) => const SignupScreen(),
+        '/tabBar': (context) => const TabBarScreen(),
+        '/settings': (context) => const SettingsScreen(),
+        '/dormDetails': (context) => const DormDetailsScreen(dormId: ''), // Add dormId dynamically in usage
+      },
+      onGenerateRoute: (settings) {
+        // Use onGenerateRoute for routes requiring parameters
+        if (settings.name == '/dormDetails') {
+          final dormId = settings.arguments as String;
+          return MaterialPageRoute(
+            builder: (context) => DormDetailsScreen(dormId: dormId),
+          );
+        }
+        return null; // Default route handling
+      },
     );
   }
 }

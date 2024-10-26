@@ -25,6 +25,19 @@ class TextStyles {
     color: Colors.grey,
   );
 
+  static const TextStyle buttonText = TextStyle(
+    fontFamily: Constants.FONT_FAMILY_LEXEND,
+    fontSize: 16,
+    fontWeight: FontWeight.bold,
+    color: Colors.white,
+  );
+
+  static TextStyle inputLabel = TextStyle(
+    fontFamily: Constants.FONT_FAMILY_LEXEND,
+    fontSize: 16,
+    color: Colors.grey[800],
+  );
+
   // Content-specific TextStyles (depend on BuildContext and user settings)
   static TextStyle heading(BuildContext context) {
     return TextStyle(
