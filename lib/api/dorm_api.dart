@@ -12,7 +12,8 @@ class DormApi {
     const initialRetryDelay = Duration(seconds: 2);
 
     while (retryCount < maxRetries) {
-      final response = await http.get(Uri.parse('${Constants.baseUrl}/dorms/all'));
+      final response =
+          await http.get(Uri.parse('${Constants.baseUrl}/dorms/all'));
 
       print('Response status: ${response.statusCode}');
       print('Response body: ${response.body}');
@@ -35,7 +36,8 @@ class DormApi {
   }
 
   static Future<Dorm> getDormById(String id) async {
-    final response = await http.get(Uri.parse('${Constants.baseUrl}/dorms/$id'));
+    final response =
+        await http.get(Uri.parse('${Constants.baseUrl}/dorms/$id'));
 
     print('Response status: ${response.statusCode}');
     print('Response body: ${response.body}');
@@ -48,28 +50,4 @@ class DormApi {
     }
   }
 
-  static Future<bool> toggleBookmark(String dormId, String token, bool isBookmarked) async {
-    final url = Uri.parse('${Constants.baseUrl}/users/${isBookmarked ? 'unbookmark' : 'bookmark'}');
-
-    print('Toggle Bookmark URL: $url');
-    print('Auth Token: $token');
-
-    final response = await http.patch(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-      body: json.encode({'dormId': dormId}),
-    );
-
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
-
-    if (response.statusCode == 200) {
-      return !isBookmarked;
-    } else {
-      throw Exception('Failed to update bookmark');
-    }
-  }
 }

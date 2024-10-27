@@ -51,34 +51,5 @@ class DormProvider with ChangeNotifier {
     return _dorms.where((dorm) => dormIds.contains(dorm.id)).toList();
   }
 
-  Future<void> toggleBookmark(String dormId, BuildContext context) async {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-
-    if (!authProvider.isLoggedIn()) {
-      Navigator.of(context).pushReplacementNamed('/login');
-      return;
-    }
-
-    try {
-      final isBookmarked = authProvider.currentUser!.bookmarks.contains(dormId);
-
-      final updatedBookmarkState = await DormApi.toggleBookmark(
-          dormId, authProvider.token!, isBookmarked);
-
-      if (updatedBookmarkState) {
-        authProvider.currentUser!.bookmarks.add(dormId);
-        print('Bookmark added: $dormId');
-      } else {
-        authProvider.currentUser!.bookmarks.remove(dormId);
-        print('Bookmark removed: $dormId');
-      }
-
-      notifyListeners();
-    } catch (error) {
-      print("Error bookmarking dorm: $error");
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to update bookmark')),
-      );
-    }
-  }
+ 
 }
