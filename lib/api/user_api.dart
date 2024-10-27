@@ -12,6 +12,7 @@ class UserApi {
   }
 
   static Future<String?> getUserId() async {
+    // Add this method to retrieve the user ID from secure storage
     return await storage.read(key: 'userId');
   }
 
@@ -35,17 +36,27 @@ class UserApi {
   static Future<void> addBookmark(String dormId) async {
     final token = await getToken();
 
-    final response = await http.patch(
-      Uri.parse('${Constants.baseUrl}/users/bookmark'),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $token",
-      },
-      body: json.encode({"dormId": dormId}),
-    );
+    try {
+      final response = await http.patch(
+        Uri.parse('${Constants.baseUrl}/users/bookmark'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+          "Cookie": "token=$token", // Add the token as a cookie
+        },
+        body: json.encode({"dormId": dormId}),
+      );
 
-    if (response.statusCode != 200) {
-      throw Exception('Failed to bookmark dorm');
+      print("Add Bookmark Response Status: ${response.statusCode}");
+      print("Add Bookmark Response Body: ${response.body}");
+      print('Token: $token');
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to bookmark dorm: ${response.body}');
+      }
+    } catch (error) {
+      print("Error in addBookmark: $error");
+      rethrow;
     }
   }
 
@@ -55,9 +66,10 @@ class UserApi {
     final response = await http.patch(
       Uri.parse('${Constants.baseUrl}/users/unbookmark'),
       headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $token",
-      },
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+          "Cookie": "token=$token", // Add the token as a cookie
+        },
       body: json.encode({"dormId": dormId}),
     );
 

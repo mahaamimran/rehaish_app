@@ -50,9 +50,10 @@ class _TabBarScreenState extends State<TabBarScreen> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: 'Profile', // Profile tab
+            label: 'Profile',
           ),
         ],
+        type: BottomNavigationBarType.fixed,
         currentIndex: _selectedIndex,
         unselectedItemColor: Colors.grey,
         showSelectedLabels: false,
