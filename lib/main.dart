@@ -15,7 +15,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => DormProvider()),
         ChangeNotifierProvider(create: (_) => SettingsProvider()),
-        ChangeNotifierProvider(create: (_) => AuthProvider()), // Load token on app start
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
       ],
       child: const MyApp(),
     ),

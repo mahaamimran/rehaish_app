@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:rehaish_app/models/dorm.dart';
 import '../config/constants.dart';
+
 class DormApi {
   static const int maxRetries = 3;
 
@@ -13,30 +14,23 @@ class DormApi {
     while (retryCount < maxRetries) {
       final response = await http.get(Uri.parse('${Constants.baseUrl}/dorms/all'));
 
-      // Log the status code and the body of the response
       print('Response status: ${response.statusCode}');
       print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         final List<dynamic> jsonResponse = jsonDecode(response.body);
-
         if (jsonResponse.isEmpty) {
           throw Exception('API returned empty or null data');
         }
-
         return jsonResponse.cast<Map<String, dynamic>>();
       } else if (response.statusCode == 429) {
-        // Handle rate-limiting by retrying with exponential backoff
         print('Too many requests, retrying after delay...');
         retryCount++;
-        await Future.delayed(
-            initialRetryDelay * retryCount); // Exponential backoff
+        await Future.delayed(initialRetryDelay * retryCount);
       } else {
-        // Log error and throw exception
         throw Exception('Failed to load dorms');
       }
     }
-
     throw Exception('Max retries exceeded, failed to load dorms');
   }
 
@@ -51,6 +45,31 @@ class DormApi {
       return Dorm.fromJson(jsonResponse);
     } else {
       throw Exception('Failed to load dorm details');
+    }
+  }
+
+  static Future<bool> toggleBookmark(String dormId, String token, bool isBookmarked) async {
+    final url = Uri.parse('${Constants.baseUrl}/users/${isBookmarked ? 'unbookmark' : 'bookmark'}');
+
+    print('Toggle Bookmark URL: $url');
+    print('Auth Token: $token');
+
+    final response = await http.patch(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: json.encode({'dormId': dormId}),
+    );
+
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      return !isBookmarked;
+    } else {
+      throw Exception('Failed to update bookmark');
     }
   }
 }

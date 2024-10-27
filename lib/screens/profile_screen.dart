@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:rehaish_app/providers/auth_provider.dart';
 import 'package:rehaish_app/screens/login_screen.dart';
 import 'package:rehaish_app/config/color_constants.dart';
+import 'package:rehaish_app/config/text_styles.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -14,20 +15,22 @@ class ProfileScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Profile"),
-        backgroundColor: ColorConstants.primaryColor,
+        title: const Text("Profile", style: TextStyles.appBarTitle),
+        backgroundColor: Colors.grey[800],
         centerTitle: true,
       ),
       body: user != null
           ? Container(
               color: ColorConstants.backgroundColor,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 40.0),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 20.0, vertical: 30.0),
                 child: Column(
                   children: [
                     // Profile Picture and Username Card
                     Card(
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15)),
                       elevation: 5,
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -35,24 +38,22 @@ class ProfileScreen extends StatelessWidget {
                           children: [
                             CircleAvatar(
                               radius: 50,
-                              backgroundColor: ColorConstants.secondaryColor.withOpacity(0.1),
-                              child: const Icon(Icons.person, size: 50, color: ColorConstants.secondaryColor),
+                              backgroundColor: ColorConstants.secondaryColor
+                                  .withOpacity(0.1),
+                              child: const Icon(Icons.person,
+                                  size: 50,
+                                  color: ColorConstants.secondaryColor),
                             ),
                             const SizedBox(height: 15),
                             Text(
                               user.username,
-                              style: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: ColorConstants.primaryColor,
-                              ),
+                              style: TextStyles.heading(context)
+                                  .copyWith(color: ColorConstants.primaryColor),
                             ),
+                            const SizedBox(height: 5),
                             Text(
                               user.email,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                color: ColorConstants.subtitleColor,
-                              ),
+                              style: TextStyles.appCaption,
                             ),
                           ],
                         ),
@@ -63,20 +64,23 @@ class ProfileScreen extends StatelessWidget {
 
                     // User Information Section
                     Card(
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15)),
                       elevation: 3,
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _buildInfoRow("First Name:", user.firstName),
+                            _buildInfoRow(
+                                "First Name:", user.firstName, context),
                             const Divider(),
-                            _buildInfoRow("Last Name:", user.lastName),
+                            _buildInfoRow("Last Name:", user.lastName, context),
                             const Divider(),
-                            _buildInfoRow("Role:", user.role),
+                            _buildInfoRow("Role:", user.role, context),
                             const Divider(),
-                            _buildInfoRow("Account Created:", user.createdAt.split('T')[0]),
+                            _buildInfoRow("Account Created:",
+                                user.createdAt.split('T')[0], context),
                           ],
                         ),
                       ),
@@ -89,18 +93,18 @@ class ProfileScreen extends StatelessWidget {
                       onPressed: () async {
                         await authProvider.logout();
                         Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(builder: (context) => const LoginScreen()),
+                          MaterialPageRoute(
+                              builder: (context) => const LoginScreen()),
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: ColorConstants.accentColor,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        backgroundColor: ColorConstants.primaryColor,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
                         minimumSize: const Size(double.infinity, 50),
                       ),
-                      child: const Text(
-                        "Log Out",
-                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                      ),
+                      child:
+                          const Text("Log Out", style: TextStyles.buttonText),
                     ),
                   ],
                 ),
@@ -111,7 +115,7 @@ class ProfileScreen extends StatelessWidget {
   }
 
   // Helper method to build each row of user information
-  Widget _buildInfoRow(String label, String value) {
+  Widget _buildInfoRow(String label, String value, BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -119,18 +123,12 @@ class ProfileScreen extends StatelessWidget {
         children: [
           Text(
             label,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: ColorConstants.textColor,
-            ),
+            style: TextStyles.bold(context),
           ),
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 16,
-              color: ColorConstants.secondaryColor,
-            ),
+            style: TextStyles.caption(context)
+                .copyWith(color: ColorConstants.secondaryColor),
           ),
         ],
       ),

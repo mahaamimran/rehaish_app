@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rehaish_app/providers/dorm_provider.dart';
+import 'package:rehaish_app/providers/auth_provider.dart';
 import 'package:rehaish_app/config/color_constants.dart';
 import 'package:rehaish_app/config/text_styles.dart';
 
@@ -25,6 +26,7 @@ class _DormDetailsScreenState extends State<DormDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     final dormProvider = Provider.of<DormProvider>(context);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final dorm = dormProvider.currentDorm;
 
     return Scaffold(
@@ -111,11 +113,7 @@ class _DormDetailsScreenState extends State<DormDetailsScreen> {
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Dorm bookmarked!'),
-                              ),
-                            );
+                            dormProvider.toggleBookmark(dorm.id, context);
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: ColorConstants.primaryColor,
@@ -124,7 +122,9 @@ class _DormDetailsScreenState extends State<DormDetailsScreen> {
                             ),
                           ),
                           child: Text(
-                            'Bookmark Dorm',
+                            authProvider.currentUser!.bookmarks.contains(dorm.id)
+                                ? 'Bookmarked'
+                                : 'Bookmark Dorm',
                             style: TextStyles.caption(context).copyWith(color: Colors.white),
                           ),
                         ),
