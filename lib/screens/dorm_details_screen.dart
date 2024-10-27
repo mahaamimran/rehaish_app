@@ -129,8 +129,9 @@ class _DormDetailsScreenState extends State<DormDetailsScreen> {
                             cancelButtonText: "Cancel",
                             confirmButtonText: "Log In",
                             onConfirm: () {
-                              Navigator.of(context).push(
+                              Navigator.of(context).pushAndRemoveUntil(
                                 MaterialPageRoute(builder: (context) => const LoginScreen()),
+                                (route) => false,
                               );
                             },
                           ),

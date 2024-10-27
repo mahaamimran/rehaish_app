@@ -3,9 +3,8 @@
 class Constants {
 
   // API URL
-  // static const String baseUrl = 'http://localhost:3000/api/v1';
-  static const String baseUrl = 'https://rehaishkikhwaish.site/api/v1';
-  // https://rehaishkikhwaish.site/api/v1/ for deployment
+  static const String baseUrl = 'http://localhost:3000/api/v1';
+  //static const String baseUrl = 'https://rehaishkikhwaish.site/api/v1';
 
   // SharedPreferences Keys
   static const String FONT_SIZE_KEY = 'fontSize';

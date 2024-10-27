@@ -45,8 +45,8 @@ class UserApi {
         body: json.encode({"dormId": dormId}),
       );
 
-      print("Add Bookmark Response Status: ${response.statusCode}");
-      print("Add Bookmark Response Body: ${response.body}");
+      // print("Add Bookmark Response Status: ${response.statusCode}");
+      // print("Add Bookmark Response Body: ${response.body}");
 
       if (response.statusCode != 200) {
         throw Exception('Failed to bookmark dorm: ${response.body}');

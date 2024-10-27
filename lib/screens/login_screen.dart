@@ -56,6 +56,15 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _enterAsGuest() {
+    // Clear the text controllers
+    _emailController.clear();
+    _passwordController.clear();
+    
+    // Call the AuthProvider to set the guest mode (ensure AuthProvider handles guest mode if necessary)
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    authProvider.enterAsGuest();
+
+    // Navigate to the main app screen
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (context) => const TabBarScreen()),
     );
@@ -76,8 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Title
-             Text(
+            Text(
               "Welcome Back!",
               style: TextStyles.appBarTitle.copyWith(color: Colors.black),
               textAlign: TextAlign.center,

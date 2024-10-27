@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:rehaish_app/api/dorm_api.dart';
 import 'package:rehaish_app/models/dorm.dart';
 import 'package:rehaish_app/config/enums.dart';
-import 'package:provider/provider.dart';
-import 'auth_provider.dart';
 
 class DormProvider with ChangeNotifier {
   List<Dorm> _dorms = [];

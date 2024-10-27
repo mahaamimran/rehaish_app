@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import '../api/user_api.dart';
-import '../config/constants.dart';
+import '../api/auth_api.dart';
 import '../models/user.dart';
 
 class AuthProvider extends ChangeNotifier {
-  final storage = const FlutterSecureStorage();
   String? _token;
   User? currentUser;
 
@@ -19,11 +14,11 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> _initializeAuth() async {
     // Load token and user ID from local storage
-    _token = await UserApi.getToken();
-    final userId = await UserApi.getUserId();
+    _token = await AuthApi.getToken();
+    final userId = await AuthApi.getUserId();
 
     print('Loaded token: $_token, userId: $userId'); // Debugging
-    
+
     // If token and userId are found, try to fetch the user profile
     if (_token != null && userId != null) {
       await _fetchUserProfile(userId);
@@ -35,25 +30,9 @@ class AuthProvider extends ChangeNotifier {
     if (_token == null) return; // If no token, skip fetching
 
     try {
-      final response = await http.get(
-        Uri.parse('${Constants.baseUrl}/users/$userId'),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $_token",
-        },
-      );
-
-      print("Profile fetch status: ${response.statusCode}");
-      print("Profile fetch body: ${response.body}");
-
-      if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
-        currentUser = User.fromJson(responseData['user']);
-        notifyListeners();
-      } else {
-        print("Failed to fetch profile. Status: ${response.statusCode}, Body: ${response.body}");
-        throw Exception('Failed to fetch user profile');
-      }
+      final responseData = await AuthApi.fetchUserProfile(userId, _token!);
+      currentUser = User.fromJson(responseData['user']);
+      notifyListeners();
     } catch (error) {
       print("Profile loading error: $error");
       await logout(); // Clear local storage if fetching profile fails
@@ -62,29 +41,15 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> login(String email, String password) async {
     try {
-      final response = await http.post(
-        Uri.parse('${Constants.baseUrl}/users/login'),
-        headers: {"Content-Type": "application/json"},
-        body: json.encode({"email": email, "password": password}),
-      );
+      final responseData = await AuthApi.login(email, password);
 
-      print("Login response status: ${response.statusCode}");
-      print("Login response body: ${response.body}");
+      _token = responseData['token'];
+      final userData = responseData['savedUserWithoutPassword'];
+      currentUser = User.fromJson(userData);
 
-      if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
-        _token = responseData['token'];
-        final userData = responseData['savedUserWithoutPassword'];
-        currentUser = User.fromJson(userData);
-
-        // Save token and user ID to secure storage
-        await storage.write(key: 'jwtToken', value: _token);
-        await storage.write(key: 'userId', value: currentUser!.id);
-
-        notifyListeners();
-      } else {
-        throw Exception('Failed to login');
-      }
+      // Save token and user ID to secure storage
+      await AuthApi.saveTokenAndUserId(_token!, currentUser!.id);
+      notifyListeners();
     } catch (error) {
       print("Login error: $error");
       rethrow;
@@ -94,8 +59,12 @@ class AuthProvider extends ChangeNotifier {
   Future<void> logout() async {
     _token = null;
     currentUser = null;
-    await storage.delete(key: 'jwtToken');
-    await storage.delete(key: 'userId');
+    await AuthApi.clearTokenAndUserId();
+    notifyListeners();
+  }
+
+  Future<void> enterAsGuest() async {
+    currentUser = null;
     notifyListeners();
   }
 
