@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:rehaish_app/config/text_styles.dart';
 import 'package:rehaish_app/providers/auth_provider.dart';
 import 'package:rehaish_app/screens/tab_bar_screen.dart';
+import 'package:rehaish_app/config/color_constants.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -18,7 +20,6 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _login() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
-    // Trim the email and password values
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
 
@@ -26,17 +27,9 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = true;
     });
 
-    // Log the values to ensure they are correct
-    print("Email: $email");
-    print("Password: $password");
-
     try {
-      await authProvider.login(
-        email,
-        password,
-      );
+      await authProvider.login(email, password);
 
-    // Navigate to home page after login
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => const TabBarScreen()),
       );
@@ -62,32 +55,123 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
+  void _enterAsGuest() {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => const TabBarScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Login")),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: ColorConstants.primaryColor,
+        title: const Text("Login", style: TextStyles.appBarTitle),
+        centerTitle: true,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // Title
+             Text(
+              "Welcome Back!",
+              style: TextStyles.appBarTitle.copyWith(color: Colors.black),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 10),
+            const Text(
+              "Log in to continue",
+              style: TextStyles.appCaption,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 40),
+
+            // Email Field
             TextField(
               controller: _emailController,
-              decoration: const InputDecoration(labelText: "Email"),
+              decoration: InputDecoration(
+                labelText: "Email",
+                labelStyle: TextStyles.inputLabel,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                filled: true,
+                fillColor: Colors.grey[100],
+              ),
             ),
             const SizedBox(height: 20),
+
+            // Password Field
             TextField(
               controller: _passwordController,
-              decoration: const InputDecoration(labelText: "Password"),
+              decoration: InputDecoration(
+                labelText: "Password",
+                labelStyle: TextStyles.inputLabel,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                filled: true,
+                fillColor: Colors.grey[100],
+              ),
               obscureText: true,
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 30),
+
+            // Login Button
             _isLoading
-                ? const CircularProgressIndicator()
+                ? const Center(child: CircularProgressIndicator())
                 : ElevatedButton(
                     onPressed: _login,
-                    child: const Text("Log In"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ColorConstants.primaryColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                    ),
+                    child: const Text(
+                      "Log In",
+                      style: TextStyles.buttonText,
+                    ),
                   ),
+            const SizedBox(height: 20),
+
+            // Divider
+            Row(
+              children: [
+                Expanded(child: Divider(color: Colors.grey[400])),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text("or", style: TextStyles.appCaption),
+                ),
+                Expanded(child: Divider(color: Colors.grey[400])),
+              ],
+            ),
+            const SizedBox(height: 20),
+
+            // Continue as Guest Button
+            OutlinedButton(
+              onPressed: _enterAsGuest,
+              style: OutlinedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                side: const BorderSide(color: ColorConstants.primaryColor),
+                padding: const EdgeInsets.symmetric(vertical: 15),
+              ),
+              child: const Text(
+                "Continue as Guest",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: ColorConstants.primaryColor,
+                ),
+              ),
+            ),
           ],
         ),
       ),

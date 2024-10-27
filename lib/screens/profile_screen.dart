@@ -16,7 +16,7 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Profile", style: TextStyles.appBarTitle),
-        backgroundColor: ColorConstants.primaryColor, // Set to primary color
+        backgroundColor: ColorConstants.primaryColor,
         centerTitle: true,
         elevation: 0,
       ),
@@ -29,7 +29,6 @@ class ProfileScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // Profile Picture
                       CircleAvatar(
                         radius: 60,
                         backgroundColor: ColorConstants.primaryColor.withOpacity(0.1),
@@ -40,25 +39,18 @@ class ProfileScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 20),
-
-                      // Username and Email
                       Text(
                         user.username,
-                        style: TextStyles.heading(context).copyWith(
+                        style: TextStyles.appTitle.copyWith(
                           color: ColorConstants.primaryColor,
-                          fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 5),
                       Text(
                         user.email,
-                        style: TextStyles.caption(context).copyWith(
-                          color: Colors.grey[600],
-                        ),
+                        style: TextStyles.appCaption.copyWith(color: Colors.black),
                       ),
                       const SizedBox(height: 30),
-
-                      // User Information Section
                       Card(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15),
@@ -69,28 +61,23 @@ class ProfileScreen extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              _buildInfoRow("First Name:", user.firstName, context),
+                              _buildInfoRow("First Name:", user.firstName),
                               const Divider(),
-                              _buildInfoRow("Last Name:", user.lastName, context),
+                              _buildInfoRow("Last Name:", user.lastName),
                               const Divider(),
-                              _buildInfoRow("Role:", user.role, context),
+                              _buildInfoRow("Role:", user.role),
                               const Divider(),
-                              _buildInfoRow("Account Created:", user.createdAt.split('T')[0], context),
+                              _buildInfoRow("Account Created:", user.createdAt.split('T')[0]),
                             ],
                           ),
                         ),
                       ),
-
                       const SizedBox(height: 40),
-
-                      // Logout Button
                       ElevatedButton(
                         onPressed: () async {
                           await authProvider.logout();
                           Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(
-                              builder: (context) => const LoginScreen(),
-                            ),
+                            MaterialPageRoute(builder: (context) => const LoginScreen()),
                           );
                         },
                         style: ElevatedButton.styleFrom(
@@ -107,27 +94,41 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ),
             )
-          : const Center(child: CircularProgressIndicator()),
+          : Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text("You are not logged in", style: TextStyles.appTitle),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (context) => const LoginScreen()),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ColorConstants.primaryColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      minimumSize: const Size(150, 50),
+                    ),
+                    child: const Text("Go to Login", style: TextStyles.buttonText),
+                  ),
+                ],
+              ),
+            ),
     );
   }
 
-  // Helper method to build each row of user information
-  Widget _buildInfoRow(String label, String value, BuildContext context) {
+  Widget _buildInfoRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
-            style: TextStyles.bold(context),
-          ),
-          Text(
-            value,
-            style: TextStyles.caption(context).copyWith(
-              color: ColorConstants.secondaryColor,
-            ),
-          ),
+          Text(label, style: TextStyles.appCaption.copyWith(color: Colors.black)),
+          Text(value, style: TextStyles.appCaption.copyWith(color: ColorConstants.secondaryColor)),
         ],
       ),
     );
