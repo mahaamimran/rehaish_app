@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:rehaish_app/providers/auth_provider.dart';
+import 'package:rehaish_app/providers/user_provider.dart';
 import 'package:rehaish_app/providers/dorm_provider.dart';
 import 'package:rehaish_app/widgets/dorm_card.dart';
-import 'package:rehaish_app/screens/login_screen.dart';
 import '../config/color_constants.dart';
 import '../config/text_styles.dart';
 
@@ -12,38 +11,10 @@ class BookmarksScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context);
+    final userProvider = Provider.of<UserProvider>(context);
     final dormProvider = Provider.of<DormProvider>(context);
 
-    // Check if the user is logged in
-    if (!authProvider.isLoggedIn()) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'Sign in to view your bookmarks',
-              style: TextStyles.appTitle,
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: ColorConstants.primaryColor,
-              ),
-              child: const Text('Sign In', style: TextStyles.buttonText),
-            ),
-          ],
-        ),
-      );
-    }
-
-    // Get bookmarked dorms
-    final bookmarkedDorms = dormProvider.getDormsByIds(authProvider.currentUser!.bookmarks);
+    final bookmarkedDorms = dormProvider.getDormsByIds(userProvider.bookmarkedDormIds);
 
     return Scaffold(
       appBar: AppBar(

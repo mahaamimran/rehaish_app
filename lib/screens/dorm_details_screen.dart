@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rehaish_app/providers/dorm_provider.dart';
-import 'package:rehaish_app/providers/auth_provider.dart';
 import 'package:rehaish_app/config/color_constants.dart';
 import 'package:rehaish_app/config/text_styles.dart';
 import 'package:rehaish_app/providers/user_provider.dart';
@@ -16,11 +15,20 @@ class DormDetailsScreen extends StatefulWidget {
 }
 
 class _DormDetailsScreenState extends State<DormDetailsScreen> {
+  bool isBookmarked = false;
+
   @override
   void initState() {
     super.initState();
-    Future.microtask(() =>
-        Provider.of<DormProvider>(context, listen: false).fetchDormById(widget.dormId));
+    Future.microtask(() {
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+      final dormProvider = Provider.of<DormProvider>(context, listen: false);
+
+      dormProvider.fetchDormById(widget.dormId);
+      setState(() {
+        isBookmarked = userProvider.isBookmarked(widget.dormId);
+      });
+    });
   }
 
   @override
@@ -37,8 +45,6 @@ class _DormDetailsScreenState extends State<DormDetailsScreen> {
         body: const Center(child: CircularProgressIndicator()),
       );
     }
-
-    final isBookmarked = userProvider.isBookmarked(dorm.id);
 
     return Scaffold(
       appBar: AppBar(
@@ -121,28 +127,32 @@ class _DormDetailsScreenState extends State<DormDetailsScreen> {
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      try {
-                        if (isBookmarked) {
-                          await userProvider.removeBookmark(dorm.id);
-                        } else {
-                          await userProvider.addBookmark(dorm.id);
-                        }
-                      } catch (error) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Error updating bookmark')),
-                        );
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      setState(() {
+                        isBookmarked = !isBookmarked;
+                      });
+
+                      if (isBookmarked) {
+                        userProvider.addBookmark(dorm.id);
+                      } else {
+                        userProvider.removeBookmark(dorm.id);
                       }
                     },
+                    icon: Icon(
+                      isBookmarked ? Icons.check : Icons.bookmark_border,
+                      color: Colors.white,
+                    ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: ColorConstants.primaryColor,
+                      backgroundColor: isBookmarked
+                          ? Colors.green
+                          : ColorConstants.primaryColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    child: Text(
-                      isBookmarked ? 'Bookmarked' : 'Bookmark Dorm',
+                    label: Text(
+                      isBookmarked ? 'Bookmarked' : 'Bookmark',
                       style: TextStyles.caption(context)
                           .copyWith(color: Colors.white),
                     ),

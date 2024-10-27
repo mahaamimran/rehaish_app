@@ -1,7 +1,6 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
 import '../config/constants.dart';
 
 class UserApi {
@@ -12,7 +11,6 @@ class UserApi {
   }
 
   static Future<String?> getUserId() async {
-    // Add this method to retrieve the user ID from secure storage
     return await storage.read(key: 'userId');
   }
 
@@ -42,14 +40,13 @@ class UserApi {
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token",
-          "Cookie": "token=$token", // Add the token as a cookie
+          "Cookie": "token=$token",
         },
         body: json.encode({"dormId": dormId}),
       );
 
       print("Add Bookmark Response Status: ${response.statusCode}");
       print("Add Bookmark Response Body: ${response.body}");
-      print('Token: $token');
 
       if (response.statusCode != 200) {
         throw Exception('Failed to bookmark dorm: ${response.body}');
@@ -63,18 +60,23 @@ class UserApi {
   static Future<void> removeBookmark(String dormId) async {
     final token = await getToken();
 
-    final response = await http.patch(
-      Uri.parse('${Constants.baseUrl}/users/unbookmark'),
-      headers: {
+    try {
+      final response = await http.patch(
+        Uri.parse('${Constants.baseUrl}/users/unbookmark'),
+        headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token",
-          "Cookie": "token=$token", // Add the token as a cookie
+          "Cookie": "token=$token",
         },
-      body: json.encode({"dormId": dormId}),
-    );
+        body: json.encode({"dormId": dormId}),
+      );
 
-    if (response.statusCode != 200) {
-      throw Exception('Failed to unbookmark dorm');
+      if (response.statusCode != 200) {
+        throw Exception('Failed to unbookmark dorm: ${response.body}');
+      }
+    } catch (error) {
+      print("Error in removeBookmark: $error");
+      rethrow;
     }
   }
 }
