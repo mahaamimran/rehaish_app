@@ -16,6 +16,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
+  bool _obscureText = true;
 
   Future<void> _login() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
@@ -124,8 +125,19 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 filled: true,
                 fillColor: Colors.grey[100],
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscureText ? Icons.visibility_off : Icons.visibility,
+                    color: Colors.grey,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _obscureText = !_obscureText;
+                    });
+                  },
+                ),
               ),
-              obscureText: true,
+              obscureText: _obscureText,
             ),
             const SizedBox(height: 30),
 

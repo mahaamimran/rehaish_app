@@ -6,7 +6,10 @@ class Constants {
   // static const String baseUrl = 'http://192.168.18.187:3000/api/v1';
   // static const String baseUrl = 'https://rehaishkikhwaish.site/api/v1';
   static const String baseUrl = 'http://localhost:3000/api/v1';
+
+  // API Image URL
   static const String imageBaseUrl = 'http://localhost:3000/img/dorms/';
+  // static const String imageBaseUrl = 'https://rehaishkikhwaish.site/img/dorms/';
 
   // SharedPreferences Keys
   static const String FONT_SIZE_KEY = 'fontSize';
