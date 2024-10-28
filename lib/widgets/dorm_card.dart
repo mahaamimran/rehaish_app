@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:rehaish_app/models/dorm.dart';
 import 'package:rehaish_app/config/color_constants.dart';
 import 'package:rehaish_app/config/text_styles.dart';
-import 'package:rehaish_app/screens/dorm_details_screen.dart'; // Import details screen
+import 'package:rehaish_app/screens/dorm_details_screen.dart';
+
+import '../config/constants.dart';
 
 class DormCard extends StatelessWidget {
   final Dorm dorm;
@@ -33,18 +35,31 @@ class DormCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Image placeholder
+                // Load dorm image from network or use placeholder
                 ClipRRect(
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(15),
                     topRight: Radius.circular(15),
                   ),
-                  child: Image.asset(
-                    'assets/images/placeholder_image.png',
-                    height: 180,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
+                  child: dorm.imageCover.isNotEmpty
+                      ? Image.network(
+                          '${Constants.imageBaseUrl}${dorm.imageCover}',
+                          height: 180,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => Image.asset(
+                            'assets/images/placeholder_image.png',
+                            height: 180,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                      : Image.asset(
+                          'assets/images/placeholder_image.png',
+                          height: 180,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(12.0),

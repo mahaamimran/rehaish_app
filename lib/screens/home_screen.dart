@@ -24,7 +24,7 @@ class HomeScreen extends StatelessWidget {
       backgroundColor: ColorConstants.backgroundColor,
       appBar: AppBar(
         title: const Text(
-          'Rehaish Ki Khwaish',
+          'Dorms',
           style: TextStyles.appBarTitle,
         ),
         backgroundColor: ColorConstants.primaryColor,
