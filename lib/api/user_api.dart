@@ -21,6 +21,7 @@ class UserApi {
       headers: {
         "Content-Type": "application/json",
         "Authorization": "Bearer $token",
+        "Cookie": "token=$token",
       },
     );
 
