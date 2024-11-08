@@ -48,6 +48,14 @@ class DormProvider with ChangeNotifier {
   List<Dorm> getDormsByIds(List<String> dormIds) {
     return _dorms.where((dorm) => dormIds.contains(dorm.id)).toList();
   }
-
+  Future<void> addReviewToDorm(Dorm dorm, String title, String text, double rating, String userId) async {
+      try {
+        final newReview = await DormApi.addReview(dorm.id, title, text, rating, userId);
+        dorm.reviews.add(newReview); // Add the new review to the current dorm's reviews
+        notifyListeners(); // Update UI
+      } catch (error) {
+        print("Error adding review: $error");
+      }
+    }
  
 }

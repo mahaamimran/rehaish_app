@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rehaish_app/providers/auth_provider.dart';
 import 'package:rehaish_app/providers/dorm_provider.dart';
+import 'package:rehaish_app/providers/review_provider.dart';
 import 'package:rehaish_app/config/color_constants.dart';
 import 'package:rehaish_app/config/text_styles.dart';
+import 'package:rehaish_app/widgets/review_card.dart';
 import 'package:rehaish_app/providers/user_provider.dart';
 import 'package:rehaish_app/screens/login_screen.dart';
 import 'package:rehaish_app/widgets/custom_alert_dialog.dart';
@@ -28,8 +30,11 @@ class _DormDetailsScreenState extends State<DormDetailsScreen> {
     Future.microtask(() {
       final userProvider = Provider.of<UserProvider>(context, listen: false);
       final dormProvider = Provider.of<DormProvider>(context, listen: false);
+      final reviewProvider = Provider.of<ReviewProvider>(context, listen: false);
 
       dormProvider.fetchDormById(widget.dormId);
+      reviewProvider.fetchReviews(widget.dormId);
+      
       setState(() {
         isBookmarked = userProvider.isBookmarked(widget.dormId);
       });
@@ -40,6 +45,7 @@ class _DormDetailsScreenState extends State<DormDetailsScreen> {
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final dormProvider = Provider.of<DormProvider>(context);
+    final reviewProvider = Provider.of<ReviewProvider>(context);
     final userProvider = Provider.of<UserProvider>(context);
     final dorm = dormProvider.currentDorm;
 
@@ -193,6 +199,19 @@ class _DormDetailsScreenState extends State<DormDetailsScreen> {
                   ),
                 ),
               ],
+            ),
+            const SizedBox(height: 20),
+
+            // Reviews Section
+            Text('Reviews', style: TextStyles.title(context)),
+            const SizedBox(height: 10),
+            Expanded(
+              child: ListView.builder(
+                itemCount: reviewProvider.reviews.length,
+                itemBuilder: (context, index) {
+                  return ReviewCard(review: reviewProvider.reviews[index]);
+                },
+              ),
             ),
           ],
         ),

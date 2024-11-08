@@ -9,6 +9,7 @@ import 'package:rehaish_app/screens/signup_screen.dart';
 import 'package:rehaish_app/screens/tab_bar_screen.dart';
 import 'package:rehaish_app/screens/settings_screen.dart';
 import 'package:rehaish_app/screens/dorm_details_screen.dart';
+import 'providers/review_provider.dart';
 
 void main() {
   runApp(
@@ -18,6 +19,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => SettingsProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => ReviewProvider()),
       ],
       child: const MyApp(),
     ),

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:rehaish_app/models/dorm.dart';
 import '../config/constants.dart';
+import '../models/review.dart';
 
 class DormApi {
   static const int maxRetries = 3;
@@ -15,8 +16,8 @@ class DormApi {
       final response =
           await http.get(Uri.parse('${Constants.baseUrl}/dorms/all'));
 
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      // print('Response status: ${response.statusCode}');
+      // print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         final List<dynamic> jsonResponse = jsonDecode(response.body);
@@ -39,14 +40,40 @@ class DormApi {
     final response =
         await http.get(Uri.parse('${Constants.baseUrl}/dorms/$id'));
 
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+    // print('Response status: ${response.statusCode}');
+    // print('Response body: ${response.body}');
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
       return Dorm.fromJson(jsonResponse);
     } else {
       throw Exception('Failed to load dorm details');
+    }
+  }
+   static Future<Review> addReview(
+    String dormId,
+    String title,
+    String text,
+    double rating,
+    String userId,
+  ) async {
+    final response = await http.post(
+      Uri.parse('${Constants.baseUrl}/dorms/review'),
+      headers: {"Content-Type": "application/json"},
+      body: json.encode({
+        "reviewTitle": title,
+        "reviewText": text,
+        "rating": rating,
+        "dormId": dormId,
+        "userId": userId,
+      }),
+    );
+
+    if (response.statusCode == 201) {
+      final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+      return Review.fromJson(jsonResponse);
+    } else {
+      throw Exception("Failed to add review");
     }
   }
 
