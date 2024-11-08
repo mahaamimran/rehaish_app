@@ -8,6 +8,8 @@ import 'package:rehaish_app/providers/user_provider.dart';
 import 'package:rehaish_app/screens/login_screen.dart';
 import 'package:rehaish_app/widgets/custom_alert_dialog.dart';
 
+import '../config/constants.dart';
+
 class DormDetailsScreen extends StatefulWidget {
   final String dormId;
 
@@ -65,14 +67,39 @@ class _DormDetailsScreenState extends State<DormDetailsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              height: 200,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.grey,
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: const Center(child: Text('Image Placeholder')),
+            // Display dorm image
+            ClipRRect(
+              borderRadius: BorderRadius.circular(15),
+              child: dorm.imageCover.isNotEmpty
+                  ? Image.network(
+                      '${Constants.imageBaseUrl}${dorm.imageCover}',
+                      height: 200,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Container(
+                          height: 200,
+                          width: double.infinity,
+                          color: Colors.grey[200],
+                          child: const Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      },
+                      errorBuilder: (context, error, stackTrace) => Image.asset(
+                        'assets/images/placeholder_image.png',
+                        height: 200,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                  : Image.asset(
+                      'assets/images/placeholder_image.png',
+                      height: 200,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
             ),
             const SizedBox(height: 20),
 

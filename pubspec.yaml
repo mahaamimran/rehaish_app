@@ -72,5 +72,5 @@ flutter:
         - asset: assets/fonts/Lexend-Black.ttf
           weight: 900
   uses-material-design: true
-  #
-    #holder_image.png
+  assets:
+    - assets/images/placeholder_image.png
