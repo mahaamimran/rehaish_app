@@ -17,7 +17,7 @@ class AuthProvider extends ChangeNotifier {
     _token = await AuthApi.getToken();
     final userId = await AuthApi.getUserId();
 
-    print('Loaded token: $_token, userId: $userId'); // Debugging
+    // print('Loaded token: $_token, userId: $userId'); // Debugging
 
     // If token and userId are found, try to fetch the user profile
     if (_token != null && userId != null) {
@@ -27,7 +27,7 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> _fetchUserProfile(String userId) async {
-    if (_token == null) return; // If no token, skip fetching
+    if (_token == null) return;
 
     try {
       final responseData = await AuthApi.fetchUserProfile(userId, _token!);
@@ -44,7 +44,7 @@ class AuthProvider extends ChangeNotifier {
       final responseData = await AuthApi.login(email, password);
 
       _token = responseData['token'];
-      final userData = responseData['savedUserWithoutPassword'];
+      final userData = responseData['user']; // Ensure this matches the JSON structure
       currentUser = User.fromJson(userData);
 
       // Save token and user ID to secure storage

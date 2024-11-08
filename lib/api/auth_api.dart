@@ -29,7 +29,7 @@ class AuthApi {
   }
 
   // Login API request
-  static Future<Map<String, dynamic>> login(String email, String password) async {
+    static Future<Map<String, dynamic>> login(String email, String password) async {
     final response = await http.post(
       Uri.parse('${Constants.baseUrl}/users/login'),
       headers: {"Content-Type": "application/json"},
@@ -37,19 +37,27 @@ class AuthApi {
     );
 
     if (response.statusCode == 200) {
-      return json.decode(response.body);
+      final Map<String, dynamic> responseBody = json.decode(response.body);
+      if (responseBody.containsKey('token') && responseBody.containsKey('user')) {
+        return responseBody;
+      } else {
+        throw Exception('Unexpected response format: Missing token or user data');
+      }
     } else {
-      throw Exception('Failed to login');
+      throw Exception('Failed to login: ${response.body}');
     }
   }
 
+
   // Fetch user profile by user ID
-  static Future<Map<String, dynamic>> fetchUserProfile(String userId, String token) async {
+  static Future<Map<String, dynamic>> fetchUserProfile(
+      String userId, String token) async {
     final response = await http.get(
       Uri.parse('${Constants.baseUrl}/users/$userId'),
       headers: {
         "Content-Type": "application/json",
         "Authorization": "Bearer $token",
+        "Cookie": "token=$token",
       },
     );
 
