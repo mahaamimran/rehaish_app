@@ -5,6 +5,7 @@ import 'package:rehaish_app/providers/dorm_provider.dart';
 import 'package:rehaish_app/providers/review_provider.dart';
 import 'package:rehaish_app/config/color_constants.dart';
 import 'package:rehaish_app/config/text_styles.dart';
+import 'package:rehaish_app/screens/review_screen.dart';
 import 'package:rehaish_app/widgets/review_card.dart';
 import 'package:rehaish_app/providers/user_provider.dart';
 import 'package:rehaish_app/screens/login_screen.dart';
@@ -30,11 +31,12 @@ class _DormDetailsScreenState extends State<DormDetailsScreen> {
     Future.microtask(() {
       final userProvider = Provider.of<UserProvider>(context, listen: false);
       final dormProvider = Provider.of<DormProvider>(context, listen: false);
-      final reviewProvider = Provider.of<ReviewProvider>(context, listen: false);
+      final reviewProvider =
+          Provider.of<ReviewProvider>(context, listen: false);
 
       dormProvider.fetchDormById(widget.dormId);
       reviewProvider.fetchReviews(widget.dormId);
-      
+
       setState(() {
         isBookmarked = userProvider.isBookmarked(widget.dormId);
       });
@@ -123,7 +125,8 @@ class _DormDetailsScreenState extends State<DormDetailsScreen> {
                     const SizedBox(height: 5),
                     Text(
                       '${dorm.address.city.name}, ${dorm.address.street}, ${dorm.address.province}, ${dorm.address.country}',
-                      style: TextStyles.caption(context).copyWith(color: Colors.black),
+                      style: TextStyles.caption(context)
+                          .copyWith(color: Colors.black),
                     ),
                   ],
                 ),
@@ -146,7 +149,8 @@ class _DormDetailsScreenState extends State<DormDetailsScreen> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    child: const Text('Contact Owner', style: TextStyles.buttonText),
+                    child: const Text('Contact Owner',
+                        style: TextStyles.buttonText),
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -163,7 +167,8 @@ class _DormDetailsScreenState extends State<DormDetailsScreen> {
                             confirmButtonText: "Log In",
                             onConfirm: () {
                               Navigator.of(context).pushAndRemoveUntil(
-                                MaterialPageRoute(builder: (context) => const LoginScreen()),
+                                MaterialPageRoute(
+                                    builder: (context) => const LoginScreen()),
                                 (route) => false,
                               );
                             },
@@ -187,14 +192,17 @@ class _DormDetailsScreenState extends State<DormDetailsScreen> {
                       color: Colors.white,
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: isBookmarked ? Colors.green : ColorConstants.primaryColor,
+                      backgroundColor: isBookmarked
+                          ? Colors.green
+                          : ColorConstants.primaryColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
                     label: Text(
                       isBookmarked ? 'Bookmarked' : 'Bookmark',
-                      style: TextStyles.caption(context).copyWith(color: Colors.white),
+                      style: TextStyles.caption(context)
+                          .copyWith(color: Colors.white),
                     ),
                   ),
                 ),
@@ -211,6 +219,29 @@ class _DormDetailsScreenState extends State<DormDetailsScreen> {
                 itemBuilder: (context, index) {
                   return ReviewCard(review: reviewProvider.reviews[index]);
                 },
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Button to navigate to review screen
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => ReviewScreen(dormId: widget.dormId),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: ColorConstants.primaryColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child:
+                    const Text('Leave a Review', style: TextStyles.buttonText),
               ),
             ),
           ],

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:rehaish_app/models/review.dart';
 import 'package:rehaish_app/config/color_constants.dart';
 import 'package:rehaish_app/config/text_styles.dart';
-import '../config/constants.dart';
 
 class ReviewCard extends StatelessWidget {
   final Review review;
@@ -20,13 +19,11 @@ class ReviewCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Profile Picture
-            ClipOval(
-              child: Image.network(
-                '${Constants.imageBaseUrl}${review.user.profilePicture}',
-                width: 40,
-                height: 40,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => const Icon(Icons.account_circle, size: 40, color: Colors.grey),
+            const ClipOval(
+              child: Icon(
+                Icons.person,
+                size: 20,
+                color: ColorConstants.primaryColor,
               ),
             ),
             const SizedBox(width: 10),
